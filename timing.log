@@ -1,0 +1,141 @@
+Warning: Design 'top' has '16' unresolved references. For more detailed information, use the "link" command. (UID-341)
+Information: Updating graph... (UID-83)
+Warning: Design 'top' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+Information: Updating design information... (UID-85)
+Warning: Design 'top' contains 1 high-fanout nets. A fanout number of 1000 will be used for delay calculations involving these nets. (TIM-134)
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : top
+Version: E-2010.12-SP4
+Date   : Sat Nov  7 19:06:03 2020
+****************************************
+
+ # A fanout number of 1000 was used for high fanout net computations.
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: SynNeur1/PS2/RM1/DUT123/X1/Intermediate_Value1_reg[15]
+              (rising edge-triggered flip-flop clocked by clk_0_1ps)
+  Endpoint: SynNeur1/PS2/RM1/DUT123/X1/A1/result_reg[30]
+            (rising edge-triggered flip-flop clocked by clk_0_1ps)
+  Path Group: clk_0_1ps
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  top                5K_hvratio_1_1        NangateOpenCellLibrary
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock clk_0_1ps (rise edge)                             0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  SynNeur1/PS2/RM1/DUT123/X1/Intermediate_Value1_reg[15]/CK (DFF_X1)
+                                                          0.00 #     0.00 r
+  SynNeur1/PS2/RM1/DUT123/X1/Intermediate_Value1_reg[15]/Q (DFF_X1)
+                                                          0.09       0.09 f
+  SynNeur1/PS2/RM1/DUT123/X1/A1/b_operand[15] (Addition_Subtraction_2)
+                                                          0.00       0.09 f
+  SynNeur1/PS2/RM1/DUT123/X1/A1/lt_580/B[15] (Addition_Subtraction_2_DW_cmp_1)
+                                                          0.00       0.09 f
+  SynNeur1/PS2/RM1/DUT123/X1/A1/lt_580/U168/ZN (NOR2_X1)
+                                                          0.05       0.13 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/lt_580/U220/ZN (OAI21_X1)
+                                                          0.03       0.17 f
+  SynNeur1/PS2/RM1/DUT123/X1/A1/lt_580/U172/ZN (AOI21_X1)
+                                                          0.06       0.22 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/lt_580/U194/ZN (OAI21_X1)
+                                                          0.04       0.26 f
+  SynNeur1/PS2/RM1/DUT123/X1/A1/lt_580/U191/ZN (AOI21_X1)
+                                                          0.06       0.32 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/lt_580/U300/ZN (OAI21_X1)
+                                                          0.04       0.35 f
+  SynNeur1/PS2/RM1/DUT123/X1/A1/lt_580/GE_LT_GT_LE (Addition_Subtraction_2_DW_cmp_1)
+                                                          0.00       0.35 f
+  SynNeur1/PS2/RM1/DUT123/X1/A1/U27/Z (BUF_X1)            0.05       0.40 f
+  SynNeur1/PS2/RM1/DUT123/X1/A1/U52/Z (MUX2_X1)           0.08       0.48 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/add_623/A[0] (Addition_Subtraction_2_DW01_inc_0)
+                                                          0.00       0.48 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/add_623/U1_1_1/CO (HA_X1)
+                                                          0.07       0.55 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/add_623/U1_1_2/CO (HA_X1)
+                                                          0.06       0.62 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/add_623/U1_1_3/CO (HA_X1)
+                                                          0.06       0.68 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/add_623/U1_1_4/CO (HA_X1)
+                                                          0.06       0.74 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/add_623/U1_1_5/CO (HA_X1)
+                                                          0.06       0.81 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/add_623/U1_1_6/CO (HA_X1)
+                                                          0.06       0.87 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/add_623/U3/Z (XOR2_X1)
+                                                          0.07       0.94 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/add_623/SUM[7] (Addition_Subtraction_2_DW01_inc_0)
+                                                          0.00       0.94 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/U90/ZN (NAND2_X1)         0.03       0.97 f
+  SynNeur1/PS2/RM1/DUT123/X1/A1/U81/ZN (NAND3_X1)         0.03       1.00 r
+  SynNeur1/PS2/RM1/DUT123/X1/A1/result_reg[30]/D (DFF_X2)
+                                                          0.01       1.01 r
+  data arrival time                                                  1.01
+
+  clock clk_0_1ps (rise edge)                             1.00       1.00
+  clock network delay (ideal)                             0.00       1.00
+  SynNeur1/PS2/RM1/DUT123/X1/A1/result_reg[30]/CK (DFF_X2)
+                                                          0.00       1.00 r
+  library setup time                                     -0.03       0.97
+  data required time                                                 0.97
+  --------------------------------------------------------------------------
+  data required time                                                 0.97
+  data arrival time                                                 -1.01
+  --------------------------------------------------------------------------
+  slack (VIOLATED)                                                  -0.04
+
+
+  Startpoint: reset (input port)
+  Endpoint: SynNeur1/PS1/p/px_reg[0]
+            (rising edge-triggered flip-flop)
+  Path Group: default
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  top                5K_hvratio_1_1        NangateOpenCellLibrary
+
+  Point                                    Incr       Path
+  -----------------------------------------------------------
+  input external delay                     0.00       0.00 f
+  reset (in)                               0.00       0.00 f
+  SynNeur1/reset (MODEL)                   0.00       0.00 f
+  SynNeur1/PS1/reset6 (PreSynapse)         0.00       0.00 f
+  SynNeur1/PS1/p/reset (Prel)              0.00       0.00 f
+  SynNeur1/PS1/p/U621/Z (BUF_X1)           0.06       0.06 f
+  SynNeur1/PS1/p/U53/Z (BUF_X1)            0.04       0.10 f
+  SynNeur1/PS1/p/U35/Z (BUF_X1)            0.04       0.14 f
+  SynNeur1/PS1/p/U18/ZN (INV_X1)           0.13       0.27 r
+  SynNeur1/PS1/p/U66/ZN (NAND2_X2)         0.14       0.41 f
+  SynNeur1/PS1/p/U52/ZN (INV_X1)           0.07       0.47 r
+  SynNeur1/PS1/p/U636/Z (CLKBUF_X1)        0.06       0.53 r
+  SynNeur1/PS1/p/U3/ZN (NOR2_X1)           0.03       0.57 f
+  SynNeur1/PS1/p/U17/ZN (INV_X1)           0.05       0.62 r
+  SynNeur1/PS1/p/U9/Z (BUF_X1)             0.07       0.69 r
+  SynNeur1/PS1/p/U44/ZN (AND2_X1)          0.14       0.83 r
+  SynNeur1/PS1/p/U262/ZN (AOI22_X1)        0.06       0.90 f
+  SynNeur1/PS1/p/U261/ZN (INV_X1)          0.03       0.93 r
+  SynNeur1/PS1/p/px_reg[0]/D (DFF_X1)      0.01       0.94 r
+  data arrival time                                   0.94
+
+  max_delay                                1.00       1.00
+  library setup time                      -0.03       0.97
+  data required time                                  0.97
+  -----------------------------------------------------------
+  data required time                                  0.97
+  data arrival time                                  -0.94
+  -----------------------------------------------------------
+  slack (MET)                                         0.03
+
+
+1
