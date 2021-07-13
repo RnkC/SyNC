@@ -1192,6 +1192,29 @@ always@(negedge clk)
 assign comp = out_temp;
 endmodule
 
+//Module for cubic
+module square(input clk,reset,enable,input [31:0] a,output reg [31:0] out);
+
+wire underflow1,overflow1,underflow2,overflow2,underflow3,overflow3;
+wire [31:0] b,c,d;
+reg [31:0] consta;
+
+controlx CVQ1( clk,a,a,b,underflow1,overflow1);
+controlx CVQ2( clk,b,a,c,underflow2,overflow2);
+controlx CVQ3( clk,c,consta,d,underflow3,overflow3);
+
+always@(posedge clk)
+begin
+  if(reset)
+    begin
+      consta<=32'b10111011010110100111001111111111;
+    end
+else if(enable)
+    begin
+      out<=d ;
+    end
+end
+endmodule
 
 
 
@@ -2379,7 +2402,7 @@ begin
 	ccx<=32'b00100010000000000000000000000001;
 	tanhx<=32'b00100010000000000000000000000001;
 	
- const100<=32'b01000010100111010001010001111010;
+ const100<=32'b01000110000001001101000000000000;
  const1m<=32'b10111111100000000000000000000000;
  consta1<=32'b00111110010100100111100000111000;
  constb1<=32'b00111111001100010011000000011110;
@@ -2404,7 +2427,7 @@ begin
  conste14<=32'b01010110101101011110011000100000;
  const7<=32'b10111111010110011001100110011001;
  flag<=0;
- consty<=32'b00111111001101000110010001010101;//0.704656 
+ consty<=32'b00111111001101000110010010011001;//0.70466
  
  end 
  else if (enable) begin
@@ -2861,31 +2884,56 @@ endmodule
 
 // Module for Vpost[n]
 module Vpost(
-	input clk, reset, enable,clkm,
+	input clknew,clk, reset, enable,clkm,
 	input [31:0] C0,
 	input [31:0] C1,
 	input [31:0] Wpost,
+	input [31:0] C,
 	output reg [31:0] Vpost
 );
-wire underflow1,overflow1,underflow2,overflow2,underflow3,overflow3,underflow4,overflow4,underflow5,overflow5;
-wire [31:0] a,b,c,d,e,f,g,h;
+wire underflow1,overflow1,underflow2,overflow2,underflow3,overflow3,underflow4,overflow4,underflow5,overflow5,underflow6,overflow6,underflow7,overflow7;
+wire [31:0] out,a,b,c,d,e,f,g,h,k,l,m,n;
 reg [31:0] const1;
-reg [31:0] g1,ax,bx,cx,dx,fx;
+reg [31:0] g1,ax,bx,cx,dx,fx,kx,nx;
+reg [31:0] Vx,Vx1,Vx2,Vx3;
 
-controlx MMM19(clkm,C0,Wpost,a,underflow1,overflow1);//C0*Wpost
-controlx MMM20(clkm,C1,Vpost,b,underflow2,overflow2);
-controlx MMM21(clkm,bx,Vpost,c,underflow3,overflow3);
-controlx MMM22(clkm,cx,Vpost,d,underflow4,overflow4);//C1*Vpost*Vpost*Vpost
+reg [31:0] constm1by3del,constmdel,conste4,const0_0014,const1plusdel,constm1by3,constdel,constnew;
 
-fpadd AAA14(const1,C0,clkm,e);
-controlx MMM23(clkm,e,Vpost,f,underflow5,overflow5);//(C0+1)Vpost
+//controlx MMM19(clkm,C0,Wpost,a,underflow1,overflow1);//C0*Wpost
+//controlx MMM20(clkm,C1,Vpost,b,underflow2,overflow2);
+//controlx MMM21(clkm,bx,Vpost,c,underflow3,overflow3);
+//controlx MMM22(clkm,cx,Vpost,d,underflow4,overflow4);//C1*Vpost*Vpost*Vpost
 
-fpadd AAA15(dx,ax,clkm,g);
-fpadd SSS2(fx,g1,clkm,h);
+//fpadd AAA14(const1,C0,clkm,e);
+//controlx MMM23(clkm,e,Vpost,f,underflow5,overflow5);//(C0+1)Vpost
+
+//fpadd AAA15(dx,ax,clkm,g);
+//fpadd SSS2(fx,g1,clkm,h);
+
+//square CUBIC(clkm,reset,enable,Vpost,out);
+controlx MMM1129(clkm,constnew,Vx,n,underflow7,overflow7);
+controlx MMM19(clkm,constm1by3,Vx1,a,underflow1,overflow1);
+fpadd SSS2(ax,const1,clkm,m);
+controlx MMM20(clkm,m,Vx1,b,underflow2,overflow2);
+controlx MMM2293745(clkm,C,conste4,k,underflow6,overflow6);
+
+fpadd AAA14(const0_0014,kx,clkm,e);
+fpadd AAA15(e,bx,clkm,g);
+
+controlx MMM21(clkm,g,constdel,c,underflow3,overflow3);
+//controlx MMM22(clkm,Wpost,constmdel,d,underflow4,overflow4);
+fpadd SSS23123(cx,Vx,clkm,h);
+
+//controlx MMM23(clkm,const1plusdel,Vpost,f,underflow5,overflow5);
+
+
+
+//fpadd SSS2(g,dx,clkm,l);
+
 
 always@(posedge clkm)
 begin
-   g1<={!g[31],g[30:0]};
+ //  g1<={~Wpost[31],Wpost[30:0]};
 end
 
 
@@ -2900,7 +2948,22 @@ begin
 	cx<=32'b00100010000000000000000000000001;
 	dx<=32'b00100010000000000000000000000001;
 	fx<=32'b00100010000000000000000000000001;
+	kx<=32'b00100010000000000000000000000001;
+	nx<=32'b00100010000000000000000000000001;
 	const1<=32'b00111111100000000000000000000000;
+	constm1by3del<=32'b10111011010110100111001101111110;
+	constmdel<=32'b10111100001000111101011100001010;
+	conste4<=32'b01000110000111000100000000000000;
+	const0_0014<=32'b00111110000011110101110000101000;
+	const1plusdel<=32'b00111111100000010100011110101110;
+	constm1by3<=32'b10111111000000000000000000000000;
+	//const1<=32'b00111111100000000000000000000000;
+	constnew<=32'b00111100001000111101011100001010;
+	constdel<=32'b00111100001000111101011100001010;
+	Vx<=32'b00100010000000000000000000000001;
+	Vx1<=32'b00100010000000000000000000000001;
+	Vx2<=32'b00100010000000000000000000000001;
+	Vx3<=32'b00100010000000000000000000000001;
 	
  end 
  else if (enable) begin
@@ -2938,10 +3001,28 @@ begin
 	end
 	else begin
 	 fx<=f;end
-
-	 Vpost<=h;
+	 
+	 if(overflow6||underflow6)
+	begin
+	 kx<=32'b00100010000000000000000000000001;
+	end
+	else begin
+	 kx<=k;end 
+	 
+	 if(overflow7||underflow7)
+	begin
+	 Vx1<=32'b00100010000000000000000000000001;
+	end
+	else begin
+	 Vx1<=n;end 
+	 
+	 Vx<=Vpost;
+	 Vpost <= h;
+	 
  end
 end
+
+  
 endmodule
 
 // Module for Wpost[n]
@@ -2953,14 +3034,20 @@ module Wpost(
 	input [31:0] Isyn,
 	output reg [31:0] Wpost
 );
-wire underflow1,overflow1;
-wire [31:0] a,b,c,d;
-reg [31:0] b1,cx;
+wire underflow1,overflow1,underflow2,overflow2;
+wire [31:0] a,b,c,d,e;
+reg [31:0] b1,cx,ex;
+reg [31:0] const1m0_00064,const0_0008,const0_00056;
 
-fpadd AAA16(Vpost,Ipost,clkm,a);
-fpadd SSS3(a,b1,clkm,b);
-controlx MMM24(clkm,C0,b,c,underflow1,overflow1);
-fpadd AAA17(Wpost,c,clkm,d);
+//fpadd AAA16(Vpost,Ipost,clkm,a);
+//fpadd SSS3(a,b1,clkm,b);
+//controlx MMM24(clkm,C0,b,c,underflow1,overflow1);
+//fpadd AAA17(Wpost,c,clkm,d);
+controlx MMM24(clkm,Wpost,const1m0_00064,c,underflow1,overflow1);
+controlx MMM24123123(clkm,Vpost,const0_0008,e,underflow2,overflow2);
+
+fpadd AAA16(cx,ex,clkm,a);
+fpadd SSS3(a,const0_00056,clkm,d);
 
 always@(posedge clkm)
 begin
@@ -2975,14 +3062,28 @@ begin
 	
 	Wpost<=32'b00100010000000000000000000000001;
 	cx<=32'b00100010000000000000000000000001;
+	ex<=32'b00100010000000000000000000000001;
+	const1m0_00064<=32'b00111111011111111101011000001110;
+	const0_0008<=32'b00111010010100011011011100010111;
+	const0_00056<=32'b00111010000100101100110011110110;
+	
  end 
  else if (enable) begin
+   
 	if(overflow1||underflow1)
 	begin
 	 cx<=32'b00100010000000000000000000000001;
 	end
 	else begin
 	 cx<=c;end
+	 
+	 if(overflow2||underflow2)
+	begin
+	 ex<=32'b00100010000000000000000000000001;
+	end
+	else begin
+	 ex<=e;end
+	 
 	 Wpost<=d;
  end
 end
@@ -3167,7 +3268,7 @@ endmodule
 
 
 
-module PostSynapse( input tp,clk1, reset1, enable1,clkx1,
+module PostSynapse( input clknew,tp,clk1, reset1, enable1,clkx1,
 	input [31:0] Isyn,
 	
 	input clk2, reset2, enable2,clkx2,
@@ -3233,7 +3334,7 @@ assign RMx=RM5;
 
 
 S S1(clk1,reset1,enable1,clkx1,Isyn,tp,CtoS,tanhxs,Isyns,xs,ws,ys,zs,ps,qs,rs);
-Vpost V1(clk2,reset2,enable2,clkx2,C02,C12,Wpost,Vpost);
+Vpost V1(clknew,clk2,reset2,enable2,clkx2,C02,C12,Wpost,CtoM,Vpost);
 
 Wpost Wp(clk3,reset3,enable3,clkx3,C03,Vpost,Ipost3,Isyn3,Wpost);
 MXX  X1(clk6, reset6, enable6,clkx6, K36,K46,K56,K66,K76,K86,CtoM, MtoC);
@@ -3257,9 +3358,9 @@ begin
   C03<=32'b00110000100010010111000001011111;//1e-8      //(1e-9)
   Ipost3<=32'b00111111100001100110011001100110;
 
-  K04<=32'b00110100110101101011111110010100;//4e-7      
+  K04<=32'b00110010001010111100110001110111;//4e-7      
   K14<=32'b00110001010011100010100010001110;//3e-8      //(3e-9)
-  K24<=32'b01000010110010000000000000000000;//100        
+  K24<=32'b01000001001000000000000000000000;//100        
   K34<=32'b01000111100100111001000111000111;//7.55e5      //(7.55e4)
   K44<=32'b11010111100110001011010001000011;//-3.358e15       //(-3.358e14)
   K54<=32'b10111101111101011100001010001111;//-1.2            //(-1.2e-1)
@@ -3286,7 +3387,7 @@ endmodule
 
 
 module MODEL(
-	input clkm,clks,clkp,clkxp,clka,clkb,clkxy,clk, reset, enable,clkx,
+	input clknew,clkm,clks,clkp,clkxp,clka,clkb,clkxy,clk, reset, enable,clkx,
 	input tp1,	td4,
 	output[31:0] Isyn1,RMx,WWx,Ax,Dx,RMtrx,Prelx,Inhx,Pxy,Xn,Yn,Cx,Sx,Mx,Vpostx1,Wpostx1,xs,tanhxs,ws,ys,zs,ps,qs,rs,RMout);
 
@@ -3296,7 +3397,7 @@ reg [31:0] RM;
 //assign RMx=RM;
 
 PreSynapse PS1(clkm,clkxy,clkb, reset, enable,clkx, tp1,clkb, reset, enable, clkx,clkb, reset, enable,clkx, RMx, clka, reset, enable,clkx,td4,clkp, reset, enable,clkxp,clk, reset, enable,clkx,clk, reset, enable,clkx, clks, reset, enable,clkx,tp1,Isyn1,WWx,Ax,Dx,RMtrx,Prelx,Inhx,Pxy,Xn,Yn);
-PostSynapse PS2(tp1,clkb, reset, enable,clkm, Isyn1, clkb, reset, enable, clkm, clkb, reset, enable,clkm,Isyn1, clkb, reset, enable,clkm,clkb, reset, enable,clkm, RMx, clkb, reset, enable,clkm,Cx,Sx,Mx,Vpostx1,Wpostx1,tanhxs,Isyns,xs,ws,ys,zs,ps,qs,rs);
+PostSynapse PS2(clknew,tp1,clkb, reset, enable,clkm, Isyn1, clkb, reset, enable, clkm, clkb, reset, enable,clkm,Isyn1, clkb, reset, enable,clkm,clkb, reset, enable,clkm, RMx, clkb, reset, enable,clkm,Cx,Sx,Mx,Vpostx1,Wpostx1,tanhxs,Isyns,xs,ws,ys,zs,ps,qs,rs);
 
 
 
@@ -3310,10 +3411,10 @@ endmodule
 
 //Top level design module with all instances
 module top(
-clk_0_1ps,reset,enable,td4,tp1,Isyn1,RMx,WWx,Ax,Dx,RMtrx,Prelx,Inhx,Pxy,Xn,Yn,Cx,Sx,Mx,Vpostx1,Wpostx1,xs,tanhxs,ws,ys,zs,ps,qs,rs,RMout
+clknew,clk_0_1ps,reset,enable,td4,tp1,Isyn1,RMx,WWx,Ax,Dx,RMtrx,Prelx,Inhx,Pxy,Xn,Yn,Cx,Sx,Mx,Vpostx1,Wpostx1,xs,tanhxs,ws,ys,zs,ps,qs,rs,RMout
 );
   //Input declaration
-  input clk_0_1ps;
+  input clknew,clk_0_1ps;
   input reset;
   input enable;
   input td4;
@@ -3330,7 +3431,7 @@ clk_0_1ps,reset,enable,td4,tp1,Isyn1,RMx,WWx,Ax,Dx,RMtrx,Prelx,Inhx,Pxy,Xn,Yn,Cx
   parameter THRESHOLD_FOR_2_5NS_CLOCK = 250000;//Always should be even//(0.1ps=0.0001ns)*25000=2.5ns
   parameter THRESHOLD_FOR_0_1NS_CLOCK = 10000;//Always should be even//(0.1ps=0.0001ns)*1000=0.1ns
   //parameter THRESHOLD_FOR_0_1PS_CLOCK = 100;//Always should be even//(1fs=0.0001ns)*100=(0.0001ns=0.1ps)
-  MODEL SynNeur1(.clkm(clk_0_1ps),.clks(clks),.clkp(clks),.clkxp(clkxp),.clka(clks),.clkb(clks),.clkxy(clkxp),.clk(clk),.reset(reset), .enable(enable),.clkx(clkxp), .tp1(tp1),.td4(td4), .Isyn1(Isyn1),.RMx(RMx),.WWx(WWx),.Ax(Ax),.Dx(Dx),.RMtrx(RMtrx),.Prelx(Prelx),.Inhx(Inhx),.Pxy(Pxy),.Xn(Xn),.Yn(Yn),.Cx(Cx),.Sx(Sx),.Mx(Mx),.Vpostx1(Vpostx1),.Wpostx1(Wpostx1),.xs(xs),.tanhxs(tanhxs),.ws(ws),.ys(ys),.zs(zs),.ps(ps),.qs(qs),.rs(rs),.RMout(RMout)); //instantiate
+  MODEL SynNeur1(.clknew(clknew),.clkm(clk_0_1ps),.clks(clks),.clkp(clks),.clkxp(clkxp),.clka(clks),.clkb(clks),.clkxy(clkxp),.clk(clk),.reset(reset), .enable(enable),.clkx(clkxp), .tp1(tp1),.td4(td4), .Isyn1(Isyn1),.RMx(RMx),.WWx(WWx),.Ax(Ax),.Dx(Dx),.RMtrx(RMtrx),.Prelx(Prelx),.Inhx(Inhx),.Pxy(Pxy),.Xn(Xn),.Yn(Yn),.Cx(Cx),.Sx(Sx),.Mx(Mx),.Vpostx1(Vpostx1),.Wpostx1(Wpostx1),.xs(xs),.tanhxs(tanhxs),.ws(ws),.ys(ys),.zs(zs),.ps(ps),.qs(qs),.rs(rs),.RMout(RMout)); //instantiate
   ///////////////////////Clocks coming from top level clkgen module./////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
   clk_gen #(.THRESHOLD_FOR_CLOCK(THRESHOLD_FOR_5NS_CLOCK))

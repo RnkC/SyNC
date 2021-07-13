@@ -3,11 +3,11 @@
 
  module testmodel();
  //reg clk,reset,enable,clkx,td4,tp1,clkxy,clka,clkb,clkp,clkxp,clks; //inputs 
- reg clk_0_1ps,reset,enable,tp1,td4;
+ reg clknew,clk_0_1ps,reset,enable,tp1,td4;
  wire [31:0] Isyn1,RMx,WWx,Ax,Dx,RMtrx,KKx,Prelx,Inhx,Pxy,Xn,Yn,Cx,Sx,Mx,Vpostx1,Wpostx1,xs,tanhxs,ws,ys,zs,ps,qs,rs,RMout;
  integer f,i,j;
    
-   top top_inst(.clk_0_1ps(clk_0_1ps),.reset(reset),.enable(enable),.tp1(tp1),.td4(td4),.Isyn1(Isyn1),.RMx(RMx),.WWx(WWx),.Ax(Ax),.Dx(Dx),.RMtrx(RMtrx),.Prelx(Prelx),.Inhx(Inhx),.Pxy(Pxy),.Xn(Xn),.Yn(Yn),.Cx(Cx),.Sx(Sx),.Mx(Mx),.Vpostx1(Vpostx1),.Wpostx1(Wpostx1),.xs(xs),.tanhxs(tanhxs),.ws(ws),.ys(ys),.zs(zs),.ps(ps),.qs(qs),.rs(rs),.RMout(RMout));
+   top top_inst(.clknew(clknew),.clk_0_1ps(clk_0_1ps),.reset(reset),.enable(enable),.tp1(tp1),.td4(td4),.Isyn1(Isyn1),.RMx(RMx),.WWx(WWx),.Ax(Ax),.Dx(Dx),.RMtrx(RMtrx),.Prelx(Prelx),.Inhx(Inhx),.Pxy(Pxy),.Xn(Xn),.Yn(Yn),.Cx(Cx),.Sx(Sx),.Mx(Mx),.Vpostx1(Vpostx1),.Wpostx1(Wpostx1),.xs(xs),.tanhxs(tanhxs),.ws(ws),.ys(ys),.zs(zs),.ps(ps),.qs(qs),.rs(rs),.RMout(RMout));
  //parameter THRESHOLD_FOR_5NS_CLOCK = 5000;//Always should be even//0.001*5000=5ns
  //parameter THRESHOLD_FOR_2_5NS_CLOCK = 2500;//Always should be even//0.001*2500=2.5ns
  //parameter THRESHOLD_FOR_0_1NS_CLOCK = 100;//Always should be even//0.001*100=0.1ns
@@ -47,6 +47,7 @@
 //always #5ns clk_20ns = ~clk_20ns;//Global clock
   
 always #0.01ps clk_0_1ps = ~clk_0_1ps;//Global clock
+always #5ns clknew = ~clknew;
   //1 ps clock - reference lowest clock out of which all others are derived
   //////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////////////
@@ -102,12 +103,13 @@ forever #2.5ns clks = ~clks;
     if(enable)begin
      	
      	//$fwrite(outfile, "%h\t%h\t%h\t%h\t%d\n",in1, in2, out,result[i-1],diff);
-      $strobe("%b\t%b\t%b\t%b\t%b\t%b\t",Isyn1,Sx,Cx,RMx,Vpostx1,Wpostx1,$realtime);
+      $strobe("%b\t%b\t",Vpostx1,top_inst.SynNeur1.PS2.V1.Vx1,$realtime);
      	end
   end
   
   
 initial begin
+  //$monitor("%b\t",top_inst.SynNeur1.PS2.V1.clknew,$realtime);
   //$monitor("%b\t%b\t%b\t%b\t%b\t%b\t%b\t%b\t%b\t%b\t",Isyn1,Sx,xs,tanhxs,ps,qs,ws,ys,zs,rs,$realtime);
   //integer s;
   //$dumpfile("dump.vcd");
@@ -119,7 +121,7 @@ initial begin
   //for ( s = 0;s<10000;s=s+1)begin
   //#10000ps;    //$display("%b\t%b\t%b\t%b\t%b\t%b\t%b\t%b\t%b\t%b\t%b\t%b\t%t",RMx,RMtrx,Inhx,Pxy,Prelx,WWx,Ax,Dx,KKx,Isyn1,Cx,Sx,$realtime);
   //end
-clk_0_1ps = 1;
+clk_0_1ps = 1;clknew=1;
 td4=0;tp1=0;reset=1;enable=0;
 #985ns ;
 td4=~td4;tp1=~tp1;
