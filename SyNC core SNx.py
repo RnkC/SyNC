@@ -216,7 +216,7 @@ def I(t,tt):
     for tx in tt:
         x += ((t-tx)/0.1)*np.exp((-t+tx)/0.1)
     return x
-def model(z,t,u,Isyn1,noise_filtered,RM):
+def model(z,t,u,Isyn1,noise_filtered,n2,RM):
     #values
     RM1 = 0.691
     #variables 
@@ -255,10 +255,11 @@ def model(z,t,u,Isyn1,noise_filtered,RM):
     Prel = (1-Pinh)*0.25
     dwdt = Prel*A*D
     Isynx = w*Isyn1
-    kxx = 0.08*noise_filtered
-    dInfluxdt = -0.0008*noise_filtered
-    dInfluxxdt = -0.00004*Isynx
-    Isyn = ((1+kxx)/1)*Isynx 
+    kxx = 0.08*(noise_filtered)
+    k2 =0.00001*n2
+    dInfluxdt = 0
+    dInfluxxdt = 0
+    Isyn = ((1+kxx)/1)*(Isynx+k2) 
     Isynnorm = Isynx
     dSmdt = (((1+np.tanh(850*(Isyn-0.001)))*(1-Sm))-Sm/dsm)/0.1
     zx[0] = Isyn
@@ -318,6 +319,7 @@ n = 40001
 # time points
 t = np.linspace(0,40,n)
 noise = np.random.normal(0,1,n)
+n2 = np.random.normal(0,1,n)
 fs = 1000.0
 lowcut = 150.0
 highcut = 200.0
@@ -381,7 +383,7 @@ for i in range(1,n):
     tspan = [t[i-1],t[i]]
     Isyn1 = I(t[i-1],tt)
     # solve for next step
-    z = odeint(model,z0,tspan,args=(u[i],Isyn1,noise[i],RM[i-1]))
+    z = odeint(model,z0,tspan,args=(u[i],Isyn1,noise[i],n2[i],RM[i-1]))
     # store solution for plotting
     RMtrace[i] = z[1][0]
     A[i] = z[1][1]
@@ -414,10 +416,10 @@ plt.figure(figsize=(8.3,5.8))
 #ylmt = [1.02,1.02]
 #xrng = [3.6,4.6]
 #plt.plot(xrng,ylmt,'b--',label='Limit')
-plt.plot(t[2600:12600],RM[2600:12600],'m-',label='Distortion')
+plt.plot(t[2600:12600],Isyn[2600:12600],'m-',label='Distortion')
 plt.yticks(fontsize=20)
 plt.xticks(fontsize=20)
-plt.ylabel('Distortion Ratio', fontsize=24)
+plt.ylabel('RM', fontsize=24)
 plt.xlabel('Time (in s)', fontsize=24)
 plt.legend(loc=1, fontsize=20)
 plt.draw()  # Draws, but does not block
@@ -427,7 +429,7 @@ plt.figure(figsize=(8.3,5.8))
 plt.plot(t[2600:12600],RMtrace[2600:12600],'r-',label='Distortion')
 plt.yticks(fontsize=20)
 plt.xticks(fontsize=20)
-plt.ylabel('Noise', fontsize=24)
+plt.ylabel('RMtrace', fontsize=24)
 plt.xlabel('Time (in s)', fontsize=24)
 plt.legend(loc=1, fontsize=20)
 plt.draw()  # Draws, but does not block
@@ -435,7 +437,7 @@ plt.draw()  # Draws, but does not block
 fsx = 50000000.0
 cut = 20000000.0
 plt.figure(figsize=(8.3,5.8))
-plt.ylim(-0.004,0.004)
+plt.ylim(-0.02,0.02)
 rm = butter_highpass_filter(RMtrace, cut, fsx, order=6)
 plt.plot(t[3600:4600], rm[3600:4600])
 plt.show()
